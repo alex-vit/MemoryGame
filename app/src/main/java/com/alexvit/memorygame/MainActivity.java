@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private SquareGridLayout board;
 
     // game state
-    private int firstSelected;
+    private Button selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,21 +83,73 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buttonClicked(int id) {
+        Button button = (Button) findViewById(id);
+
+        if (noneSelected()) {
+            // flipped 1st tile
+            select(button);
+        } else if (sameSelected(button)) {
+            // same button clicked twice
+            Log.v(LOG_TAG, "same button clicked twice");
+        } else {
+            // flipped 2nd tile
+            paintButton(button);
+            boolean match = matchingTiles(button, selected);
+            if (match) {
+                // remove both
+                hideButton(button);
+                hideButton(selected);
+            } else {
+                // flip both
+                resetColor(button);
+                resetColor(selected);
+            }
+            selected = null;
+        }
+
         Log.v(LOG_TAG, "Button " + id + " clicked. Color: " + COLORS[id % 8]);
 
+    }
+
+    private void hideButton(Button button) {
+        button.setVisibility(View.INVISIBLE);
+    }
+    private void showButton(Button button) {
+        button.setVisibility(View.VISIBLE);
+    }
+
+    private boolean sameSelected(Button button) {
+        return selected == button;
+    }
+
+    private void select(Button button) {
+        selected = button;
+        paintButton(button);
+    }
+
+    private void paintButton(Button button) {
+        int id = button.getId();
         int tile = tiles.get(id);
         int color = COLORS[tile];
-
-        Button button = (Button) findViewById(id);
         button.getBackground().setColorFilter(
                 ContextCompat.getColor(this, color),
                 PorterDuff.Mode.MULTIPLY
         );
     }
 
+    private boolean noneSelected() {
+        return sameSelected(null);
+    }
+
+    private boolean matchingTiles(Button b1, Button b2) {
+        int tile1 = tiles.get(b1.getId());
+        int tile2 = tiles.get(b2.getId());
+        return tile1 == tile2;
+    }
+
     public void reset(View v) {
         moves = 0;
-        firstSelected = -1;
+        selected = null;
         Collections.shuffle(tiles);
 
         grayOutAllButtons();
@@ -106,7 +158,13 @@ public class MainActivity extends AppCompatActivity {
     private void grayOutAllButtons() {
         int childCount = board.getChildCount();
         for (int i = 0; i < childCount; i++) {
-            board.getChildAt(i).getBackground().setColorFilter(null);
+            Button button = (Button) board.getChildAt(i);
+            showButton(button);
+            resetColor(button);
         }
+    }
+
+    private void resetColor(Button button) {
+        button.getBackground().setColorFilter(null);
     }
 }
