@@ -15,10 +15,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
     private static final int NUM_CELLS = 16;
-
     private static final int[] COLORS = {
             android.R.color.holo_blue_dark,
             android.R.color.holo_blue_light,
@@ -29,10 +28,12 @@ public class MainActivity extends AppCompatActivity {
             android.R.color.holo_red_light,
             android.R.color.holo_purple
     };
-
     private int moves;
     private final List<Integer> tiles = Arrays.asList(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7);
     private SquareGridLayout board;
+
+    // game state
+    private int firstSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         board = (SquareGridLayout) findViewById(R.id.board);
 
         addButtons();
-        reset();
+        reset(board);
     }
 
     private void addButtons() {
@@ -94,7 +95,18 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private void reset() {
+    public void reset(View v) {
         moves = 0;
+        firstSelected = -1;
         Collections.shuffle(tiles);
-    }}
+
+        grayOutAllButtons();
+    }
+
+    private void grayOutAllButtons() {
+        int childCount = board.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            board.getChildAt(i).getBackground().setColorFilter(null);
+        }
+    }
+}

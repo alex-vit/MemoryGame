@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Memory Game</string>
+    <string name="resetButtonText">Reset</string>
 </resources>
