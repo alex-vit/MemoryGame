@@ -83,9 +83,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void buttonClicked(int id) {
         Log.v(LOG_TAG, "Button " + id + " clicked. Color: " + COLORS[id % 8]);
+
+        int tile = tiles.get(id);
+        int color = COLORS[tile];
+
         Button button = (Button) findViewById(id);
         button.getBackground().setColorFilter(
-                ContextCompat.getColor(this, COLORS[id % 8]),
+                ContextCompat.getColor(this, color),
                 PorterDuff.Mode.MULTIPLY
         );
     }
