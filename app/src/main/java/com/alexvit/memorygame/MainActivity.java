@@ -1,6 +1,7 @@
 package com.alexvit.memorygame;
 
 import android.graphics.PorterDuff;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private int moves;
     private final List<Integer> tiles = Arrays.asList(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7);
     private SquareGridLayout board;
+
+    private final Handler handler = new Handler();
+    private final int DELAY = 2000;
 
     // game state
     private Button selected;
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buttonClicked(int id) {
-        Button button = (Button) findViewById(id);
+        final Button button = (Button) findViewById(id);
 
         if (noneSelected()) {
             // flipped 1st tile
@@ -96,13 +100,39 @@ public class MainActivity extends AppCompatActivity {
             paintButton(button);
             boolean match = matchingTiles(button, selected);
             if (match) {
+                class HideRunnable implements Runnable {
+                    private final Button b1;
+                    private final Button b2;
+
+                    public HideRunnable(Button b1, Button b2) {
+                        this.b1 = b1;
+                        this.b2 = b2;
+                    }
+                    @Override
+                    public void run() {
+                        hideButton(b1);
+                        hideButton(b2);
+                    }
+                }
                 // remove both
-                hideButton(button);
-                hideButton(selected);
+                handler.postDelayed(new HideRunnable(button, selected), DELAY);
             } else {
                 // flip both
-                resetColor(button);
-                resetColor(selected);
+                class ResetRunnable implements Runnable {
+                    private final Button b1;
+                    private final Button b2;
+
+                    public ResetRunnable(Button b1, Button b2) {
+                        this.b1 = b1;
+                        this.b2 = b2;
+                    }
+                    @Override
+                    public void run() {
+                        resetColor(b1);
+                        resetColor(b2);
+                    }
+                }
+                handler.postDelayed(new ResetRunnable(button, selected), DELAY);
             }
             selected = null;
         }
