@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import com.alexvit.util.layouts.SquareGridLayout;
 
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private SquareGridLayout board;
 
     private final Handler handler = new Handler();
-    private final int DELAY = 2000;
+    private final int DELAY = 1000;
 
     // game state
     private Button selected;
@@ -98,13 +99,15 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // flipped 2nd tile
             paintButton(button);
+            countMove();
             boolean match = matchingTiles(button, selected);
+            lockButtons();
             if (match) {
                 class HideRunnable implements Runnable {
                     private final Button b1;
                     private final Button b2;
 
-                    public HideRunnable(Button b1, Button b2) {
+                    private HideRunnable(Button b1, Button b2) {
                         this.b1 = b1;
                         this.b2 = b2;
                     }
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         hideButton(b1);
                         hideButton(b2);
+                        unlockButtons();
                     }
                 }
                 // remove both
@@ -122,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                     private final Button b1;
                     private final Button b2;
 
-                    public ResetRunnable(Button b1, Button b2) {
+                    private ResetRunnable(Button b1, Button b2) {
                         this.b1 = b1;
                         this.b2 = b2;
                     }
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         resetColor(b1);
                         resetColor(b2);
+                        unlockButtons();
                     }
                 }
                 handler.postDelayed(new ResetRunnable(button, selected), DELAY);
@@ -139,6 +144,28 @@ public class MainActivity extends AppCompatActivity {
 
         Log.v(LOG_TAG, "Button " + id + " clicked. Color: " + COLORS[id % 8]);
 
+    }
+
+    private void countMove() {
+        moves++;
+        ((TextView) findViewById(R.id.moveCount)).setText(String.valueOf(moves));
+    }
+    private void resetMoves() {
+        moves = 0;
+        ((TextView) findViewById(R.id.moveCount)).setText(String.valueOf(moves));
+    }
+
+    private void lockButtons() {
+        int count = board.getChildCount();
+        for (int i = 0; i < count; i++) {
+            board.getChildAt(i).setEnabled(false);
+        }
+    }
+    private void unlockButtons() {
+        int count = board.getChildCount();
+        for (int i = 0; i < count; i++) {
+            board.getChildAt(i).setEnabled(true);
+        }
     }
 
     private void hideButton(Button button) {
@@ -178,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void reset(View v) {
-        moves = 0;
+        resetMoves();
         selected = null;
         Collections.shuffle(tiles);
 

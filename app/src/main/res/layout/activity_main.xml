@@ -17,6 +17,16 @@
             android:id="@+id/board">
     </com.alexvit.util.layouts.SquareGridLayout>
 
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="@string/movesLabel"/>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/moveCount"
+                  android:text="0"/>
+    </LinearLayout>
+
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
