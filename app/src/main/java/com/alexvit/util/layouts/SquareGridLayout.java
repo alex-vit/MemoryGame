@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.GridLayout;
 
-public class SquareGridLayout extends GridLayout{
+public class SquareGridLayout extends GridLayout {
     public SquareGridLayout(Context context) {
         super(context);
     }
@@ -13,8 +13,14 @@ public class SquareGridLayout extends GridLayout{
         super(context, attrs);
     }
 
+    /**
+     * Become square, with smaller side size.
+     */
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-        setMeasuredDimension(widthSpec, widthSpec);
+        int widthPx = MeasureSpec.getSize(widthSpec);
+        int heightPx = MeasureSpec.getSize(heightSpec);
+        int smallerSpec = widthPx < heightPx ? widthSpec : heightSpec;
+        setMeasuredDimension(smallerSpec, smallerSpec);
     }
 }
