@@ -1,9 +1,9 @@
 package com.alexvit.memorygame;
 
+import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +16,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int NUM_CELLS = 16;
-    private static final int[] COLORS = {
+    private static final int[] HOLO_COLOR_RES = {
             android.R.color.holo_blue_dark,
             android.R.color.holo_blue_light,
             android.R.color.holo_green_dark,
@@ -29,6 +29,16 @@ public class MainActivity extends AppCompatActivity {
             android.R.color.holo_orange_light,
             android.R.color.holo_red_light,
             android.R.color.holo_purple
+    };
+    private static final int[] HTML_COLOR_INTS = {
+            Color.RED,
+            0xFFFFA500, // orange
+            Color.YELLOW,
+            Color.GREEN,
+            Color.CYAN,
+            Color.BLUE,
+            0xFFFF00FF, // magenta
+            Color.BLACK
     };
     private int moves;
     private final List<Integer> tiles = Arrays.asList(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7);
@@ -142,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             selected = null;
         }
 
-        Log.v(LOG_TAG, "Button " + id + " clicked. Color: " + COLORS[id % 8]);
+        Log.v(LOG_TAG, "Button " + id + " clicked. Color: " + HTML_COLOR_INTS[id % 8]);
 
     }
 
@@ -187,10 +197,11 @@ public class MainActivity extends AppCompatActivity {
     private void paintButton(Button button) {
         int id = button.getId();
         int tile = tiles.get(id);
-        int color = COLORS[tile];
+        int color = HTML_COLOR_INTS[tile];
         button.getBackground().setColorFilter(
-                ContextCompat.getColor(this, color),
-                PorterDuff.Mode.MULTIPLY
+//                getResources().getColor(color),
+                color,
+                PorterDuff.Mode.SRC_OVER
         );
     }
 
